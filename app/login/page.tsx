@@ -39,8 +39,9 @@ export default function LoginPage() {
         })
 
         const data = await res.json()
+
         if (!res.ok) {
-          setError(data.error)
+          setError(data.error || "Login failed")
           return
         }
 
@@ -60,8 +61,9 @@ export default function LoginPage() {
         })
 
         const data = await res.json()
+
         if (!res.ok) {
-          setError(data.error)
+          setError(data.error || "Signup failed")
           return
         }
 
@@ -69,8 +71,11 @@ export default function LoginPage() {
         toast.success("Account created! Welcome to Avani Organics.")
         router.push("/")
       }
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (error) {
+      console.error("Auth form error:", error)
+      setError(
+        error instanceof Error ? error.message : "Something went wrong. Please try again."
+      )
     } finally {
       setLoading(false)
     }
@@ -79,7 +84,6 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-20">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="mb-8 flex flex-col items-center gap-3">
           <div className="flex size-14 items-center justify-center rounded-full bg-primary">
             <Leaf className="size-7 text-primary-foreground" />
@@ -89,9 +93,7 @@ export default function LoginPage() {
           </h1>
         </div>
 
-        {/* Card */}
         <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-          {/* Tabs */}
           <div className="mb-8 flex rounded-full border border-border bg-secondary p-1">
             {(["login", "register"] as Tab[]).map((tab) => (
               <button
