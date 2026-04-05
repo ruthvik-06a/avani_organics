@@ -17,7 +17,9 @@ export async function POST(request: NextRequest) {
     const db = await getDb()
     const users = db.collection("users")
 
-    const existingUser = await users.findOne({ email: email.toLowerCase() })
+    const normalizedEmail = String(email).toLowerCase().trim()
+
+    const existingUser = await users.findOne({ email: normalizedEmail })
     if (existingUser) {
       return NextResponse.json(
         { error: "An account with this email already exists" },
@@ -25,30 +27,40 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12)
+    const hashedPassword = await bcrypt.hash(String(password), 12)
 
     const result = await users.insertOne({
-      name,
-      email: email.toLowerCase(),
-      phone: phone || null,
+      name: String(name).trim(),
+      email: normalizedEmail,
+      phone: phone ? String(phone).trim() : null,
       password: hashedPassword,
       createdAt: new Date(),
     })
 
     await createSession({
       userId: result.insertedId.toString(),
-      name,
-      email: email.toLowerCase(),
+      name: String(name).trim(),
+      email: normalizedEmail,
     })
 
     return NextResponse.json(
-      { message: "Account created successfully", user: { name, email } },
+      {
+        message: "Account created successfully",
+        user: {
+          name: String(name).trim(),
+          email: normalizedEmail,
+        },
+      },
       { status: 201 }
     )
   } catch (error) {
     console.error("Signup error:", error)
+
+    const message =
+      error instanceof Error ? error.message : "Unknown signup error"
+
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { error: message },
       { status: 500 }
     )
   }
