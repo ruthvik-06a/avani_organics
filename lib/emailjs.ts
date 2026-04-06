@@ -42,6 +42,7 @@ interface SellerEmailData {
   message: string
 }
 
+<<<<<<< HEAD
 function checkEmailJsConfig(templateId: string, type: string) {
   if (!SERVICE_ID) {
     throw new Error(`Missing NEXT_PUBLIC_EMAILJS_SERVICE_ID for ${type} email`)
@@ -159,4 +160,80 @@ export async function sendSellerEmail(data: SellerEmailData) {
     console.error("Seller email failed:", error)
     throw new Error("Failed to send seller email")
   }
+=======
+export async function sendOrderEmail(data: OrderEmailData) {
+  if (!SERVICE_ID || !PUBLIC_KEY || !TEMPLATE_IDS.order) {
+    console.warn("[v0] EmailJS not configured - order email skipped")
+    return { success: true, mock: true }
+  }
+
+  // Format items as a readable list
+  const itemsList = data.items
+    .map(
+      (item) =>
+        `${item.productName} x ${item.quantity} = ₹${item.subtotal}`
+    )
+    .join("\n")
+
+  const response = await emailjs.send(
+    SERVICE_ID,
+    TEMPLATE_IDS.order,
+    {
+      to_email: "aruthvik4@gmail.com",
+      customer_name: data.customerName,
+      customer_email: data.customerEmail,
+      customer_phone: data.customerPhone,
+      customer_address: data.customerAddress,
+      order_items: itemsList,
+      total_amount: `₹${data.totalAmount}`,
+    },
+    PUBLIC_KEY
+  )
+  return { success: response.status === 200, response }
+}
+
+export async function sendContactEmail(data: ContactEmailData) {
+  if (!SERVICE_ID || !PUBLIC_KEY || !TEMPLATE_IDS.contact) {
+    console.warn("[v0] EmailJS not configured - contact email skipped")
+    return { success: true, mock: true }
+  }
+
+  const response = await emailjs.send(
+    SERVICE_ID,
+    TEMPLATE_IDS.contact,
+    {
+      to_email: "aruthvik4@gmail.com",
+      from_name: data.name,
+      from_email: data.email,
+      from_phone: data.phone || "Not provided",
+      message: data.message,
+    },
+    PUBLIC_KEY
+  )
+  return { success: response.status === 200, response }
+}
+
+export async function sendSellerEmail(data: SellerEmailData) {
+  if (!SERVICE_ID || !PUBLIC_KEY || !TEMPLATE_IDS.seller) {
+    console.warn("[v0] EmailJS not configured - seller email skipped")
+    return { success: true, mock: true }
+  }
+
+  const response = await emailjs.send(
+    SERVICE_ID,
+    TEMPLATE_IDS.seller,
+    {
+      to_email: "aruthvik4@gmail.com",
+      seller_name: data.name,
+      seller_email: data.email,
+      seller_phone: data.phone,
+      farm_location: data.farmLocation,
+      products: data.products,
+      farm_size: data.farmSize,
+      message: data.message,
+    },
+    PUBLIC_KEY
+  )
+  return { success: response.status === 200, response }
+>>>>>>> 09d70a3 (final working version)
 }

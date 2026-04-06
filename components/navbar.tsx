@@ -10,6 +10,10 @@ import {
   User,
   LogOut,
   UserCircle,
+<<<<<<< HEAD
+=======
+  Store,
+>>>>>>> 09d70a3 (final working version)
   ShoppingCart,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -84,6 +88,7 @@ export function Navbar() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           <Link href="/cart">
+<<<<<<< HEAD
              <Button
                 variant="ghost"
                 size="icon"
@@ -93,6 +98,16 @@ export function Navbar() {
                  <span className="sr-only">Cart</span>
                </Button>
              </Link>
+=======
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <ShoppingCart className="size-5" />
+            </Button>
+          </Link>
+>>>>>>> 09d70a3 (final working version)
           {mounted && !isLoading && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

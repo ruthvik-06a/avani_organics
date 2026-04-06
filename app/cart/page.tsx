@@ -18,7 +18,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useCart } from "@/lib/cart-store"
+<<<<<<< HEAD
 import { sendOrderEmail } from "@/lib/emailjs"
+=======
+>>>>>>> 09d70a3 (final working version)
 import { toast } from "sonner"
 
 export default function CartPage() {
@@ -98,6 +101,7 @@ export default function CartPage() {
   const grandTotal = total + deliveryFee
 
   async function handleSubmitOrder(e: React.FormEvent) {
+<<<<<<< HEAD
     e.preventDefault()
     setSubmitting(true)
 
@@ -107,6 +111,22 @@ export default function CartPage() {
         customerEmail: formData.email,
         customerPhone: formData.phone,
         customerAddress: formData.address,
+=======
+  e.preventDefault()
+  setSubmitting(true)
+
+  try {
+    const res = await fetch("/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+>>>>>>> 09d70a3 (final working version)
         items: items.map((item) => ({
           productName: item.product.name,
           productPrice: item.product.price,
@@ -114,6 +134,7 @@ export default function CartPage() {
           subtotal: item.product.price * item.quantity,
         })),
         totalAmount: grandTotal,
+<<<<<<< HEAD
       })
       clearCart()
       setOrderPlaced(true)
@@ -124,6 +145,27 @@ export default function CartPage() {
       setSubmitting(false)
     }
   }
+=======
+      }),
+    })
+
+    const message = await res.text()
+
+    if (!res.ok) {
+      throw new Error(message)
+    }
+
+    clearCart()
+    setOrderPlaced(true)
+    toast.success("Order placed successfully!")
+  } catch (err) {
+    console.error("Order failed:", err)
+    toast.error("Failed to place order. Please try again.")
+  } finally {
+    setSubmitting(false)
+  }
+}
+>>>>>>> 09d70a3 (final working version)
 
   return (
     <div className="min-h-screen bg-background">
@@ -441,4 +483,8 @@ export default function CartPage() {
       </div>
     </div>
   )
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 09d70a3 (final working version)
